@@ -7,4 +7,3 @@ from math import pi, sqrt
 
 def execute():
     print(Aer.backends())
-    print("Hello World!")
