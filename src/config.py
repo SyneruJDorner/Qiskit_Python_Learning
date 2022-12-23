@@ -1,6 +1,10 @@
-import sys, argparse
+import os, sys, argparse
 
 class Config():
+    ROOT_PATH = os.getcwd()
+    SRC_PATH = os.path.join(os.getcwd(), "src")
+    IMAGES_PATH = os.path.join(os.getcwd(), "src", "images")
+
     #Handle the parameters for the application
     def __determine_active_args():
         parser = argparse.ArgumentParser(prog = 'Quantum Computing', description = 'A quantum program using qiskit and python.', add_help=False)

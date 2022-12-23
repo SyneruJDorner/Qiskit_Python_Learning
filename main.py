@@ -10,7 +10,7 @@ def main():
         "version":      handler.version_handler,
         "install":      wizard.install_wizzard,
         "uninstall":    wizard.uninstall_wizzard,
-        "run":          app.execute
+        "run":          app.execute_app
     }
     
     # Pull the execution module from the config file, this will be passed by the args when the program starts.
