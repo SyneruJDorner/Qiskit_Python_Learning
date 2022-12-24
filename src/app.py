@@ -6,7 +6,7 @@ from qiskit.visualization import plot_histogram
 
 
 def execute_app():
-    formatter.clear_previous_images()
+    formatter.clear_images()
 
     # Use Aer's qasm_simulator
     simulator = QasmSimulator()
@@ -37,11 +37,11 @@ def execute_app():
     counts = result.get_counts(compiled_circuit)
 
     # Draw the circuit
-    file_path = formatter.file_name("quantum_circuit_start", "png")
+    file_path = formatter.file("quantum_circuit_start", "png")
     circuit.draw(output="mpl", filename=file_path)
 
     # Plot a histogram
-    file_path = formatter.file_name("quantum_histogram", "png")
+    file_path = formatter.file("quantum_histogram", "png")
     plot_histogram(counts).savefig(file_path)
 
     
