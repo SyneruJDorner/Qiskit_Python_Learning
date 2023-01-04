@@ -138,22 +138,13 @@ def execute_app():
 
     algorithm_globals.random_seed = 42
 
+    formatter.clear_images()
+
     num_inputs = 2
     num_samples = 20
     X = 2 * algorithm_globals.random.random([num_samples, num_inputs]) - 1
     y01 = 1 * (np.sum(X, axis=1) >= 0)  # in { 0,  1}
     y = 2 * y01 - 1  # in {-1, +1}
-    # y_one_hot = np.zeros((num_samples, 2))
-    # for i in range(num_samples):
-    #     y_one_hot[i, y01[i]] = 1
-
-    # for x, y_target in zip(X, y):
-    #     if y_target == 1:
-    #         plt.plot(x[0], x[1], "bo")
-    #     else:
-    #         plt.plot(x[0], x[1], "go")
-    # plt.plot([-1, 1], [1, -1], "--", color="black")
-    #plt.show()
 
     # construct QNN
     qc = QuantumCircuit(2)
@@ -161,8 +152,6 @@ def execute_app():
     ansatz = RealAmplitudes(2)
     qc.compose(feature_map, inplace=True)
     qc.compose(ansatz, inplace=True)
-    #savefile_path = formatter.file('Classification','png')
-    #qc.draw(output="mpl").savefig(savefile_path)
 
     estimator_qnn = EstimatorQNN(circuit=qc, input_params=feature_map.parameters, weight_params=ansatz.parameters)
 
@@ -172,11 +161,6 @@ def execute_app():
     # callback function that draws a live plot when the .fit() method is called
     def callback_graph(weights, obj_func_eval):
         objective_func_vals.append(obj_func_eval)
-        # plt.title("Objective function value against iteration")
-        # plt.xlabel("Iteration")
-        # plt.ylabel("Objective function value")
-        # plt.plot(range(len(objective_func_vals)), objective_func_vals)
-        #plt.show()
 
     # construct neural network classifier
     estimator_classifier = NeuralNetworkClassifier(estimator_qnn, optimizer=COBYLA(maxiter=60), callback=callback_graph)
@@ -197,7 +181,7 @@ def execute_app():
     # evaluate data points
     y_predict = estimator_classifier.predict(X)
 
-    # plot results
+    
     # red == wrongly classified
     for x, y_target, y_p in zip(X, y, y_predict):
         if y_target == 1:
@@ -206,5 +190,20 @@ def execute_app():
             plt.plot(x[0], x[1], "go")
         if y_target != y_p:
             plt.scatter(x[0], x[1], s=200, facecolors="none", edgecolors="r", linewidths=2)
+    
     plt.plot([-1, 1], [1, -1], "--", color="black")
+    
     plt.show()
+    
+    # construct feature map
+    feature_map = ZZFeatureMap(num_inputs)
+
+    # construct ansatz
+    ansatz = RealAmplitudes(num_inputs, reps=1)
+
+    # construct quantum circuit
+    qc = QuantumCircuit(num_inputs)
+    qc.append(feature_map, range(num_inputs))
+    qc.append(ansatz, range(num_inputs))
+    savefile_path = formatter.file('construct_feature_map','png')
+    qc.decompose().draw(output="mpl").savefig(savefile_path)
